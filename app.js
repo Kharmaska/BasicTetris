@@ -40,24 +40,56 @@ document.addEventListener('DOMContentLoaded', () => {
     [1, width + 1, width * 2 + 1, width * 3 + 1],
     [width, width + 1, width + 2, width + 3],
     [1, width + 1, width * 2 + 1, width * 3 + 1],
-    [width, width + 1, width + 2, width + 3]
-  ]
+    [width, width + 1, width + 2, width + 3],
+  ];
 
   const theTetrominoes = [lTetromino, zTetromino, tTetromino, oTetromino, iTetromino];
 
 
   let currentPosition = 4;
-  let current = theTetrominoes[0][0];
+  let currentRotation = 0;
 
-  //draw the first rotation in the first tetromino
+  // select a random tetromino from the array
+  let random = Math.floor(Math.random() * theTetrominoes.length);
+  let current = theTetrominoes[random][currentRotation];
+
+  // draw the Tetyromino
   function draw() {
     current.forEach((index) => {
       squares[currentPosition + index].classList.add('tetromino');
     });
   }
 
-  draw()
+  // undraw the Tetromino
+  function undraw() {
+    current.forEach((index) => {
+      squares[currentPosition + index].classList.remove('tetromino');
+      squares[currentPosition + index].style.backgroundColor = '';
+    });
+  }
 
+  // move down function
+  function moveDown() {
+    undraw();
+    currentPosition += width;
+    draw();
+    freeze();
+  }
+
+  // freezing a block function
+  function freeze() {
+    if (current.some((index) => squares[currentPosition + index + width].classList.contains('taken'))) {
+      current.forEach((index) => squares[currentPosition + index].classList.add('taken'));
+      // starts a new tetromino to fall down
+      random = Math.floor(Math.random() * theTetrominoes.length);
+      current = theTetrominoes[random][currentRotation];
+      currentPosition = 4;
+      draw();
+    }
+  }
+
+  // makes the tetromino to move down the grid every second
+  timerId = setInterval(moveDown, 700);
+
+  draw();
 });
-
-console.log('tata yoyo');
